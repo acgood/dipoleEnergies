@@ -2,12 +2,12 @@
 % of dipoles using the dipole approximation.
 
 % Initialize all variables and arrays
-TotalEnergy=0;
-EnergyPerDipole=0;
-LattWidth=0;
-LattHeight=0;
-basis1=[0;0];
-basis2=[0;0];
+totalEnergy=0;
+energyPerDipole=0;
+latticeWidth=0;
+latticeHeight=0;
+basisVector1=[0;0];
+basisVector2=[0;0];
 
 % Input physical constants
 epsilon=8.85418782e-12;
@@ -15,84 +15,83 @@ epsilon=8.85418782e-12;
 % Input lattice and dipole parameters
 % Note: the basis vectors and position matrix are implicitly expressed in a 
 % rectangular Cartesian system
-LattHeight=1;
-LattWidth=1;
-basis1=[1;0];
-basis2=[0;1];
+latticeHeight=1;
+latticeWidth=1;
+basisVector1=[1;0];
+basisVector2=[0;1];
 
 % Create dipole moment matrix
-dipm=zeros(LattHeight,LattWidth,2);
+dipoleMomentMatrix=zeros(latticeHeight,latticeWidth,2);
 k=0;
-for k=1:LattHeight
+for k=1:latticeHeight
 	f=0;
-	for f=1:LattWidth
-		dipm(k,f,1)=0;
-		dipm(k,f,2)=1;
+	for f=1:latticeWidth
+		dipoleMomentMatrix(k,f,1)=0;
+		dipoleMomentMatrix(k,f,2)=1;
 	end
 end
 
 % Create position matrix
-posn=zeros(LattHeight,LattWidth,2);
+positionMatrix=zeros(latticeHeight,latticeWidth,2);
 k=0;
-for k=1:LattHeight
+for k=1:latticeHeight
 	f=0;
-	for f=1:LattWidth
-		posn(k,f,1)=((f-1)*basis1(1,1) + (k-1)*basis2(1,1));
-		posn(k,f,2)=((f-1)*basis1(2,1) + (k-1)*basis2(2,1));
+	for f=1:latticeWidth
+		positionMatrix(k,f,1)=((f-1)*basisVector1(1,1) + (k-1)*basisVector2(1,1));
+		positionMatrix(k,f,2)=((f-1)*basisVector1(2,1) + (k-1)*basisVector2(2,1));
 	end
 end
 
 % Sum up the energy contribution of each interaction term
-% Note: Creating an energy matrix expressing the interaction energy of each
-% dipole with every other would be too memory intensive
-eraw=0;
+% Note: term1, term2, etc refer to the terms in the dipole energy equation
+energyRaw=0;
 k=0;
-for k=1:LattHeight
+for k=1:latticeHeight
 	f=0;
-	for f=1:LattWidth
+	for f=1:latticeWidth
 		g=0;
-		for g=1:LattHeight
+		for g=1:latticeHeight
 			h=0;
-			for h=1:LattWidth
+			for h=1:latticeWidth
 
 				if k==g && f==h
 
-					inc=0;
+					increment=0;
 
 				else
 					
-					inc=0;
+					increment=0;
 					p1=[0;0];
 					p2=[0;0];
 					r1=[0;0];
 					r2=[0;0];
-					rvector=[0;0];
-					rscalar=0;
-					rvecnorm=[0;0];
+					rVector=[0;0];
+					rScalar=0;
+					rVectorNormalized=[0;0];
 
-					p1(1,1)=dipm(k,f,1);
-					p1(2,1)=dipm(k,f,2);
-					p2(1,1)=dipm(g,h,1);
-					p2(2,1)=dipm(g,h,2);
-					r1(1,1)=posn(k,f,1);
-					r1(2,1)=posn(k,f,2);
-					r2(1,1)=posn(g,h,1);
-					r2(2,1)=posn(g,h,2);
+					p1(1,1)=dipoleMomentMatrix(k,f,1);
+					p1(2,1)=dipoleMomentMatrix(k,f,2);
+					p2(1,1)=dipoleMomentMatrix(g,h,1);
+					p2(2,1)=dipoleMomentMatrix(g,h,2);
+					r1(1,1)=positionMatrix(k,f,1);
+					r1(2,1)=positionMatrix(k,f,2);
+					r2(1,1)=positionMatrix(g,h,1);
+					r2(2,1)=positionMatrix(g,h,2);
 
-					rvector=r1-r2;
-					rscalar=norm(rvector);
-					rvecnorm=rvector/rscalar;
+					rVector=r1-r2;
+					rScalar=norm(rVector);
+					rVectorNormalized=rVector/rScalar;
 
 					term1=0;
 					term2=0;
 					term3=0;
 					term1=p1(1,1)*p2(1,1)+p1(2,1)*p2(2,1);
-					term2=p1(1,1)*rvecnorm(1,1)+p1(2,1)*rvecnorm(2,1);
-					term3=p2(1,1)*rvecnorm(1,1)+p2(2,1)*rvecnorm(2,1);
-					inc=(term1-3*term2*term3)/(rscalar^3);
+					term2=p1(1,1)*rVectorNormalized(1,1)+p1(2,1)*rVectorNormalized(2,1);
+					term3=p2(1,1)*rVectorNormalized(1,1)+p2(2,1)*rVectorNormalized(2,1);
+					increment=(term1-3*term2*term3)/(rScalar^3);
 				end
 
-				eraw=eraw+inc;
+				energyRaw=energyRaw+increment;
 			end
 		end
 	end
@@ -100,8 +99,8 @@ end
 
 % Multiply by constants and calculate relevant quantities
 
-TotalEnergy=eraw/(8*pi*epsilon);
-EnergyPerDipole=TotalEnergy/(LattWidth*LattHeight);
+totalEnergy=energyRaw/(8*pi*epsilon);
+energyPerDipole=totalEnergy/(latticeWidth*latticeHeight);
 
 
 
