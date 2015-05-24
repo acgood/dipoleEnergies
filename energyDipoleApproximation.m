@@ -12,13 +12,14 @@ basisVector2=[0;0];
 % Input physical constants
 epsilon=8.85418782e-12;
 
-% Input lattice and dipole parameters
+% Query user for lattice parameters
 % Note: the basis vectors and position matrix are implicitly expressed in a 
 % rectangular Cartesian system
-latticeHeight=1;
-latticeWidth=1;
-basisVector1=[1;0];
-basisVector2=[0;1];
+latticeHeight=input('Please enter lattice height (in molecules): ');
+latticeWidth=input('Please enter lattice width (in molecules): ');
+disp('Note: the following vectors must be entered with respect to the X-Y basis.')
+basisVector1=input('Please enter the first basis vector, in [x;y] format: ');
+basisVector2=input('Please enter the second basis vector, in [x;y] format: ');
 
 % Create dipole moment matrix
 dipoleMomentMatrix=zeros(latticeHeight,latticeWidth,2);
