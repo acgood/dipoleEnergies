@@ -15,22 +15,54 @@ epsilon=8.85418782e-12;
 % Query user for lattice parameters
 % Note: the basis vectors and position matrix are implicitly expressed in a 
 % rectangular Cartesian system
-latticeHeight=input('Please enter lattice height (in molecules): ');
-latticeWidth=input('Please enter lattice width (in molecules): ');
+latticeHeightInitial=input('Please enter lattice height (in molecules): ');
+latticeWidthInitial=input('Please enter lattice width (in molecules): ');
 disp('Note: the following vectors must be entered with respect to the X-Y basis.')
-basisVector1=input('Please enter the first basis vector, in [x;y] format: ');
-basisVector2=input('Please enter the second basis vector, in [x;y] format: ');
+disp('Also note that they should not necessarily be unit vectors.')
+basisVector1=input('Please enter the first basis vector, in [x;y] format (in meters): ');
+basisVector2=input('Please enter the second basis vector, in [x;y] format (in meters): ');
 
 % Create dipole moment matrix
-dipoleMomentMatrix=zeros(latticeHeight,latticeWidth,2);
+% Query user for structure of basic repeating unit
+unitCellHeight=input('Please enter the height (in molecules) of the basic structure: ');
+unitCellWidth=input('Please enter the width (in molecules) of the basic structure: ');
 k=0;
-for k=1:latticeHeight
+for k=1:unitCellHeight
 	f=0;
-	for f=1:latticeWidth
-		dipoleMomentMatrix(k,f,1)=0;
-		dipoleMomentMatrix(k,f,2)=1;
+	for f=1:unitCellWidth
+		dipoleMomentInputString=sprintf('Please input dipole moment vector for molecule in row %d, column %d, in [x;y] format: ', k, f);
+		dipoleUnitCell(k,f,:)=input(dipoleMomentInputString);
 	end
 end
+% Compare dimensions of lattice to dimensions of unit cell; expand lattice if 
+% necessary to make dimensions an integer multiple of unit cell dimensions
+ratioHeight=0;
+ratioWidth=0;
+ratioHeight=latticeHeightInitial/unitCellHeight;
+ratioWidth=latticeWidthInitial/unitCellWidth;
+isHeightChanged=0;
+isWidthChanged=0;
+if mod(ratioHeight,1)~=0
+	latticeHeight=ceil(ratioHeight)*unitCellHeight;
+	isHeightChanged=1;
+else
+	latticeHeight=latticeHeightInitial;
+end
+
+if mod(ratioHeight,1)~=0
+	latticeWidth=ceil(ratioWidth)*unitCellWidth;
+	isWidthChanged=1;
+else
+	latticeWidth=latticeWidthInitial;
+end
+
+if isHeightChanged==1 | isWidthChanged==1
+	changeMessage=sprintf('Crystal dimensions have been resized to %d rows by %d columns.',latticeHeight,latticeWidth)
+end
+% Create dipole moment matrix for crystal by tiling the unit cell
+dipoleMomentMatrix=zeros(latticeHeight,latticeWidth,2);
+dipoleMomentMatrix=repmat(dipoleUnitCell,ceil(ratioHeight),ceil(ratioWidth));
+
 
 % Create position matrix
 positionMatrix=zeros(latticeHeight,latticeWidth,2);
