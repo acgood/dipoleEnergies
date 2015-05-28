@@ -20,3 +20,5 @@
 
 [ totalEnergy ] = calculateDipoleEnergy( latticeHeight,...
     latticeWidth,positionMatrix,dipoleMomentMatrix );
+
+energyPerDipole=totalEnergy/(latticeHeight*latticeWidth);
