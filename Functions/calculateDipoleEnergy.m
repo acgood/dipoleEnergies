@@ -38,10 +38,10 @@ epsilon=8.854187817e-12;
 rVectorMatrix=zeros(latticeHeight,latticeWidth,2);
 r1Matrix=zeros(latticeHeight,latticeWidth,2);
 rScalarMatrix=zeros(latticeHeight,latticeWidth);
-normedRVectorMatrix=zeros(latticeHeight,latticeWidth,2);
+normedRVectorMatrix=zeros(latticeHeight,latticeWidth,3);
 rScalarIntermed=zeros(latticeHeight,latticeWidth,2);
 energyMatrix=zeros(latticeHeight,latticeWidth);
-p1Matrix=zeros(latticeHeight,latticeWidth,2);
+p1Matrix=zeros(latticeHeight,latticeWidth,3);
 
 % Construct a matrix containing the displacement vector from every dipole
 % to the target dipole
@@ -59,11 +59,13 @@ rScalarMatrix(:,:)=sqrt(sum((rScalarIntermed),3));
 
 normedRVectorMatrix(:,:,1)=rVectorMatrix(:,:,1)./rScalarMatrix;
 normedRVectorMatrix(:,:,2)=rVectorMatrix(:,:,2)./rScalarMatrix;
+normedRVectorMatrix(:,:,3)=0;
 
 % Construct the matrix of interaction energies
 
 p1Matrix(:,:,1)=dipoleMomentMatrix(k,f,1);
 p1Matrix(:,:,2)=dipoleMomentMatrix(k,f,2);
+p1Matrix(:,:,3)=dipoleMomentMatrix(k,f,3);
 
 energyMatrix=(1/(8*pi*epsilon))*(sum((p1Matrix.*dipoleMomentMatrix),3)-...
     3*(sum((p1Matrix.*normedRVectorMatrix),3)).*...

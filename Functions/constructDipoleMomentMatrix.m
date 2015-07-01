@@ -24,7 +24,7 @@ else
 end
 
 % Create dipole moment matrix for crystal by tiling the unit cell
-dipoleMomentMatrix=zeros(newHeight,newWidth,2);
+dipoleMomentMatrix=zeros(newHeight,newWidth,3);
 dipoleMomentMatrix=repmat(dipoleUnitCell,ceil(ratioHeight),ceil(ratioWidth));
 
 % Truncate matrix (if need be) to original dimensions

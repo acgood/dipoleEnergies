@@ -25,12 +25,12 @@ unitCellWidth=input('Please enter the width (in molecules) of the basic structur
 
 % Prompt user for information about dipole moments of basic repeating unit
 disp('Please enter the following information in Debye.')
-dipoleUnitCell=zeros(unitCellHeight,unitCellWidth,2);
+dipoleUnitCell=zeros(unitCellHeight,unitCellWidth,3);
 k=0;
 for k=1:unitCellHeight
 	f=0;
 	for f=1:unitCellWidth
-		dipoleMomentInputString=sprintf('Please input dipole moment vector for molecule in row %d, column %d, in [x;y] format: ', k, f);
+		dipoleMomentInputString=sprintf('Please input dipole moment vector for molecule in row %d, column %d, in [x;y;z] format: ', k, f);
 		dipoleUnitCell(k,f,:)=3.335641e-30*input(dipoleMomentInputString);
 	end
 end
